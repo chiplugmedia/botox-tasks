@@ -27,7 +27,7 @@ const TaskModel = ({ isOpen, onClose, taskToEdit, onSave, onLogout }) => {
         ...DEFAULT_TASK,
         title: taskToEdit.title || "",
         description: taskToEdit.description || "",
-        priority: (taskToEdit.priority || "low").toLowerCase(),
+        priority: (taskToEdit.priority || "low"),
         dueDate: taskToEdit.dueDate?.split("T")[0] || "",
         completed: normalizedCompleted,
         id: taskToEdit._id,
@@ -174,9 +174,9 @@ const TaskModel = ({ isOpen, onClose, taskToEdit, onSave, onLogout }) => {
                   priorityStyles[taskData.priority]
                 }`}
               >
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
+                <option>Low</option>
+                <option>Medium</option>
+                <option>High</option>
               </select>
             </div>
             <div>
@@ -209,7 +209,7 @@ const TaskModel = ({ isOpen, onClose, taskToEdit, onSave, onLogout }) => {
                   value={val}
                   checked={taskData.completed === val}
                   onChange={handleChange}
-                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
                 <span className="ml-2 text-sm text-gray-700">{label}</span>
               </label>
@@ -220,7 +220,9 @@ const TaskModel = ({ isOpen, onClose, taskToEdit, onSave, onLogout }) => {
           <button
             type="submit"
             disabled={loading}
-            className="flex items-center justify-center w-full gap-2 px-4 py-2.5 text-white transition-all duration-200 bg-gradient-to-r from-fuchsia-500 to-blue-600 rounded-lg font-medium hover:shadow-md disabled:opacity-50"
+            className="w-full bg-gradient-to-r from-fuchsia-500 to-blue-600 text-white
+            font-medium py-4 rounded-lg flex items-center justify-center gap-2 disabled:opacity-50
+            hover:shadow-md transition-all duration-200"
           >
             {loading ? (
               "Saving..."
@@ -243,4 +245,3 @@ const TaskModel = ({ isOpen, onClose, taskToEdit, onSave, onLogout }) => {
 };
 
 export default TaskModel;
-y

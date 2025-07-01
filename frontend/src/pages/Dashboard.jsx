@@ -33,6 +33,7 @@ const Dashboard = () => {
   const [selectedTask, setSelectedTask] = useState(null);
   const [filter, setFilter] = useState("all");
 
+  // Stats Summary
   const stats = useMemo(
     () => ({
       total: tasks.length,
@@ -51,12 +52,12 @@ const Dashboard = () => {
     [tasks]
   );
 
-  // FILTER TASKS
+  // Filtered Tasks
   const filteredTasks = useMemo(() => {
     return tasks.filter((task) => {
       const dueDate = new Date(task.dueDate);
       const today = new Date();
-      const nextWeek = new Date(today);
+      const nextWeek = new Date();
       nextWeek.setDate(today.getDate() + 7);
 
       switch (filter) {
@@ -74,12 +75,15 @@ const Dashboard = () => {
     });
   }, [tasks, filter]);
 
-  // SAVE TASK HANDLER
+  // Save Handler
   const handleTaskSave = useCallback(
     async (taskData) => {
       try {
-        if (taskData.id) {
-          await axios.put(`${API_BASE}/${taskData.id}/gp`, taskData);
+        if (taskData.id || taskData._id) {
+          await axios.put(
+            `${API_BASE}/${taskData.id || taskData._id}/gp`,
+            taskData
+          );
         } else {
           await axios.post(`${API_BASE}/gp`, taskData);
         }
@@ -87,7 +91,7 @@ const Dashboard = () => {
         setShowModal(false);
         setSelectedTask(null);
       } catch (error) {
-        console.error("Error Saving tasks", error);
+        console.error("Error saving task:", error);
       }
     },
     [refreshTasks]
@@ -95,7 +99,7 @@ const Dashboard = () => {
 
   return (
     <div className={WRAPPER}>
-      {/* HEADER */}
+      {/* Header */}
       <div className={HEADER}>
         <div className="min-w-0">
           <h1 className="text-xl md:text-3xl font-bold text-gray-800 flex items-center gap-2">
@@ -103,7 +107,7 @@ const Dashboard = () => {
             <span className="truncate">Task Overview</span>
           </h1>
           <p className="text-sm text-gray-500 mt-1 ml-7 truncate">
-            Manage Your tasks efficiently
+            Manage your tasks efficiently
           </p>
         </div>
         <button onClick={() => setShowModal(true)} className={ADD_BUTTON}>
@@ -112,7 +116,7 @@ const Dashboard = () => {
         </button>
       </div>
 
-      {/* STATS */}
+      {/* Stats Cards */}
       <div className={STATS_GRID}>
         {STATS.map(
           ({
@@ -120,7 +124,7 @@ const Dashboard = () => {
             label,
             icon: Icon,
             iconColor,
-            borderColor = "border-purple-100",
+            borderColor,
             valueKey,
             textColor,
             gradient,
@@ -148,9 +152,9 @@ const Dashboard = () => {
         )}
       </div>
 
-      {/* TASK CONTENT */}
+      {/* Task Content */}
       <div className="space-y-6">
-        {/* FILTER SECTION */}
+        {/* Filter */}
         <div className={FILTER_WRAPPER}>
           <div className="flex items-center gap-2 min-w-0">
             <Filter className="w-5 h-5 text-blue-500 shrink-0" />
@@ -184,7 +188,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* TASK LIST */}
+        {/* Tasks */}
         <div className="space-y-4">
           {filteredTasks.length === 0 ? (
             <div className={EMPTY_STATE.wrapper}>
@@ -209,7 +213,7 @@ const Dashboard = () => {
           ) : (
             filteredTasks.map((task) => (
               <TaskItem
-                key={task.id || task._id}
+                key={task._id || task.id}
                 task={task}
                 onRefresh={refreshTasks}
                 showCompleteCheckbox
@@ -222,18 +226,17 @@ const Dashboard = () => {
           )}
         </div>
 
-        {/* ADD TASK BUTTON (DESKTOP VIEW) */}
+        {/* Desktop Add Task Button */}
         <div
           onClick={() => setShowModal(true)}
-          className="hidden md:flex items-center justify-center p-4 border-2 border-dashed border-blue-100
-          rounded-xl hover:border-blue-400 bg-blue-50/50 cursor-pointer transition-colors"
+          className="hidden md:flex items-center justify-center p-4 border-2 border-dashed border-blue-100 rounded-xl hover:border-blue-400 bg-blue-50/50 cursor-pointer transition-colors"
         >
           <Plus className="w-5 h-5 text-blue-500 mr-2" />
           <span className="text-gray-600 font-medium">Add New Task</span>
         </div>
       </div>
 
-      {/* TASK MODAL */}
+      {/* Task Modal */}
       <TaskModel
         isOpen={showModal || !!selectedTask}
         onClose={() => {
